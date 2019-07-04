@@ -11,3 +11,4 @@ c.execute('''CREATE TABLE tweets
     location text)''')
 conn.commit()
 conn.close()
+
