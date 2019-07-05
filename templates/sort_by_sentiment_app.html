@@ -4,10 +4,16 @@
     <title>Sort By Sentiment</title>
   </head>
   <body>
-
-  <div>
-	Sort tweets by sentiment.
-  </div>
-
+    <h1>Tweets ordered from most positive to negative</h1>
+    {% for tweet in tweets %}
+      <div>
+        <ul>
+          <li>{{tweet.username}}</li>
+          <li>{{tweet.posted_date}}</li>
+          <li>{{tweet.tweet_text}}</li>
+          <li>{{tweet.sentiment}}</li>
+        </ul>
+      </div>
+    {% endfor %}
   </body>
 </html>
