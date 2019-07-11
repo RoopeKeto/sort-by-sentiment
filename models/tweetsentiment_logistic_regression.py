@@ -61,8 +61,8 @@ stop = stopwords.words('english')
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(data['SentimentText'], data['Sentiment'])
 #splitting to smaller sizes (for faster testing)
-X_train = X_train[0:2500]
-y_train = y_train[0:2500]
+#X_train = X_train[0:2500]
+#y_train = y_train[0:2500]
 
 # using tfidf
 tfidf = TfidfVectorizer(strip_accents=None,
@@ -70,19 +70,28 @@ tfidf = TfidfVectorizer(strip_accents=None,
                         preprocessor=None)
 
 # using grid search
+# param_grid = [{'vect__ngram_range': [(1, 1)],
+#                'vect__stop_words': [stop, None],
+#                'vect__tokenizer': [tokenizer, tokenizer_porter],
+#                'clf__penalty': ['l1', 'l2'],
+#                'clf__C': [1.0, 10.0, 100.0]},
+#               {'vect__ngram_range': [(1, 1)],
+#                'vect__stop_words': [stop, None],
+#                'vect__tokenizer': [tokenizer, tokenizer_porter],
+#                'vect__use_idf':[False],
+#                'vect__norm':[None],
+#                'clf__penalty': ['l1', 'l2'],
+#                'clf__C': [1.0, 10.0, 100.0]},
+#               ]
+
+# using following for performance reasons (full data)
 param_grid = [{'vect__ngram_range': [(1, 1)],
-               'vect__stop_words': [stop, None],
-               'vect__tokenizer': [tokenizer, tokenizer_porter],
-               'clf__penalty': ['l1', 'l2'],
-               'clf__C': [1.0, 10.0, 100.0]},
-              {'vect__ngram_range': [(1, 1)],
-               'vect__stop_words': [stop, None],
-               'vect__tokenizer': [tokenizer, tokenizer_porter],
-               'vect__use_idf':[False],
-               'vect__norm':[None],
-               'clf__penalty': ['l1', 'l2'],
-               'clf__C': [1.0, 10.0, 100.0]},
-              ]
+                   'vect__stop_words': [None],
+                   'vect__tokenizer': [tokenizer],
+                    'clf__penalty': ['l2'],
+                    'clf__C': [10.0]},
+                   ]
+
 
 lr_tfidf = Pipeline([('vect', tfidf),
                      ('clf', LogisticRegression(random_state=0))])
@@ -100,6 +109,6 @@ print('CV Accuracy: %.3f' % gs_lr_tfidf.best_score_)
 
 
 clf = gs_lr_tfidf.best_estimator_
-print('Test Accuracy: %.3f' % clf.score(X_test, y_test)) # 0.719
+print('Test Accuracy: %.3f' % clf.score(X_test, y_test)) # about 80 % was the accuracy
 # check the results
 
