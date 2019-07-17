@@ -18,7 +18,7 @@ consumer_key = twitter_credentials.CONSUMER_KEY
 consumer_secret = twitter_credentials.CONSUMER_SECRET
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
-api = tweepy.API(auth)
+api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 # # # utility functions for displaying and searching tweets
 def print_tweet(tweet):
