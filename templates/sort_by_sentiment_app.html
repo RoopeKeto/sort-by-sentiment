@@ -14,7 +14,7 @@
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
         <div class="container">
-          <a class="navbar-brand mr-4" href="/">Sort tweets by sentiment from positive to negative</a>
+          <a class="navbar-brand mr-4" href="/">Sort from positive to negative</a>
           <div class="collapse navbar-collapse" id="navbarToggle">
           </div>
         </div>
@@ -28,13 +28,13 @@
               {% if tweets %}
                 {% for tweet in tweets %}
                   <article class="media content-section">
+                    <img class="rounded-circle article-img" src="{{ tweet.img_source }}">
                     <div class="media-body">
                       <div class="article-metadata">
                         <a class="mr-2" href="#">{{ tweet.username }}</a>
                         <small class="text-muted">{{ tweet.posted_date }}</small>
                       </div>
-                      <!-- <h2><a class="article-title" href="#">Tweet is positive with probability: {{(tweet.sentiment*100)|round(2)}} % }}</a></h2>-->
-                      <p class="article-content">{{ tweet.tweet_text }}<br><small>The Tweet is positive with probability: {{(tweet.sentiment*100)|round(2)}} %
+                      <p class="article-content">{{ tweet.tweet_text }}<br><small>The tweet is positive with probability: {{(tweet.sentiment*100)|round(2)}} %
                       </small>
                     </div>
                   </article>
@@ -50,11 +50,32 @@
                   <legend class="border-bottom mb-4">Search for tweets</legend>
                   <div class="form-group">
                     {{ form.searchword.label(class="form-control-label") }}
-                    {{ form.searchword(class="form-control form-control-lg") }}
+                    
+                    {% if form.searchword.errors %}
+                      {{ form.searchword(class="form-control form-control-lg is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.searchword.errors %}
+                          <span>{{ error }}</span>
+                        {% endfor %}
+                      </div>
+                    {% else %}
+                      {{ form.searchword(class="form-control form-control-lg") }}
+                    {% endif %}         
                   </div>
                   <div class="form-group">
-                      {{ form.number_of_results.label(class="form-control-label") }}
+                    {{ form.number_of_results.label(class="form-control-label") }}
+                    {% if form.number_of_results.errors %}
+                      {{ form.number_of_results(class="form-control form-control-lg is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.number_of_results.errors %}
+                          <span>{{ error }}</span>
+                        {% endfor %}
+                      </div>
+                    {% else %}
                       {{ form.number_of_results(class="form-control form-control-lg") }}
+                    {% endif %}
+                    <br><small>You can query 1500 tweets per 15 min.</small>
+                    <br><small>Query of over 1000 tweets can take up to a minute</small>
                   </div>
                 </fieldset>
                 <div class="form-group">
@@ -62,8 +83,22 @@
                 </div>
               </form>
             </div>
+            {% if tweets %}
+              <div class="content-section">
+                  <img src="{{ url_for('static', filename='word_cloud.png') }}" alt="word cloud" class="img-fluid">
+              </div>
+            {% endif %}
           </div>
         </div>
+        {% if tweets %}
+        <div class="row">
+          <div class="col-md-8">
+            <div class="content-section">
+                <embed type="image/svg+xml" src={{ graph_data|safe }} style='max-width:1000px'/>      
+            </div>
+          </div>
+        </div>
+        {% endif %}
       </main>
 
    <!-- jQuery first, then Popper.js, then Bootstrap JS -->

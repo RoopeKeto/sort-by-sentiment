@@ -42,7 +42,6 @@ def search_tweets(search_word, tweet_quantity, ignore_retweets=True, language='e
                 tweets.append(tweet)
         else:
             tweets.append(tweet)
-            
     return tweets
 
 def get_tweet_text(tweet):

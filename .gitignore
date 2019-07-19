@@ -2,3 +2,4 @@ database/twitter.db
 database/twitter_credentials.py
 training-data/Sentiment Analysis Dataset.csv
 __pycache__/twitter_credentials.cpython-36.pyc
+twitter_credentials.py
