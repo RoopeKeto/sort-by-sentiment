@@ -74,8 +74,8 @@
                     {% else %}
                       {{ form.number_of_results(class="form-control form-control-lg") }}
                     {% endif %}
-                    <br><small>You can query 1500 tweets per 15 min.</small>
-                    <br><small>Query of over 1000 tweets can take up to a minute</small>
+                    <br><small>You can query 1500 tweets per 15 min.</small><br>
+                    <small>Max 500 at one query.</small>
                   </div>
                 </fieldset>
                 <div class="form-group">
@@ -85,7 +85,7 @@
             </div>
             {% if tweets %}
               <div class="content-section">
-                  <img src="{{ url_for('static', filename='word_cloud.png') }}" alt="word cloud" class="img-fluid">
+                  <img src= "{{cloud_img_path}}" alt="word cloud" class="img-fluid">
               </div>
             {% endif %}
           </div>

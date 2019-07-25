@@ -6,9 +6,10 @@ from vectorizer import vect
 from twitter_search import search_tweets
 from forms import SearchForm
 import wordcloud
-from flask_cachebuster import CacheBuster
 import pygal 
-
+import random
+import glob
+ 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0b248914a4417846b62d195c17626830'
 
@@ -32,11 +33,6 @@ def get_tweets(search_word, number_of_tweets):
         tweet_dict['img_source'] = tweet.user.profile_image_url
         tweets.append(tweet_dict)
     return tweets, text
-
-# initializin cachebuster
-config = { 'extensions': ['.png'], 'hash_size': 5 }
-cache_buster = CacheBuster(config=config)
-cache_buster.init_app(app)
 
 # setting up the classifier
 cur_dir = os.path.dirname(__file__)
@@ -64,7 +60,19 @@ def index():
             stop_words = ["https", "co", "RT"] + list(wordcloud.STOPWORDS)
             word_cloud = wordcloud.WordCloud(stopwords=stop_words, background_color="rgba(255, 255, 255, 0)", mode="RGBA")
             word_cloud.generate(text_for_cloud)
-            word_cloud.to_file("static/word_cloud.png")
+            # generating random numbers to the end of the image name to ensure that it is updated (not saved in cache)
+            random_part = str(random.randint(1,101))
+            path_to_img = f'static/word_cloud{random_part}.png'
+            # before saving the file into the path specified, deleting possible old images (png format)
+            # 1. Get a list of all the file paths that ends with .png from in specified directory
+            fileList = glob.glob('static/word_cloud*.png')
+            # 2. delete "old" png images
+            for filePath in fileList:
+                try:
+                    os.remove(filePath)
+                except:
+                    print("Error while deleting file : ", filePath)
+            word_cloud.to_file(path_to_img)
 
             # calculating sentiments for tweets and adding these to dictionaries, also adding counts to bin
             bin_counts = [0,0,0,0,0,0,0,0,0,0]
@@ -106,7 +114,7 @@ def index():
                                         (bin_counts[6], 0.6, 0.7),(bin_counts[7], 0.7, 0.8),(bin_counts[8], 0.8, 0.9),(bin_counts[9], 0.9, 1)])
             graph_data = graph.render_data_uri()
         
-            return render_template('sort_by_sentiment_app.html', tweets=sorted_tweets, form=form, graph_data=graph_data)
+            return render_template('sort_by_sentiment_app.html', tweets=sorted_tweets, form=form, graph_data=graph_data, cloud_img_path=path_to_img)
 
         return render_template('sort_by_sentiment_app.html', form=form)
     except Exception as e:
